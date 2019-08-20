@@ -368,6 +368,7 @@ static int const RCTVideoUnset = -1;
         
       _player = [AVPlayer playerWithPlayerItem:_playerItem];
       _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+      _player.automaticallyWaitsToMinimizeStalling = NO;
         
       [_player addObserver:self forKeyPath:playbackRate options:0 context:nil];
       _playbackRateObserverRegistered = YES;
@@ -866,7 +867,13 @@ static int const RCTVideoUnset = -1;
     } else if([_ignoreSilentSwitch isEqualToString:@"obey"]) {
       [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
     }
-    [_player play];
+	  
+	if (@available(iOS 10.0, *)) {
+		[_player playImmediatelyAtRate:1.0];
+	} else {
+		[_player play];
+	}
+	
     [_player setRate:_rate];
   }
   
